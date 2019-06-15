@@ -33,3 +33,43 @@ rfe.out = rfe(x= itrain[,-20], y= Yi[isample], sizes = subsets, rfeControl = ctr
 sel.var = rfe.out$optVariables
 itrain = itrain[,sel.var]
 itest = itest[,sel.var]
+
+
+
+result
+> summary(glm.out)
+
+Call:
+NULL
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-2.1389  -0.4786  -0.3119  -0.1772   3.1310  
+
+Coefficients:
+                               Estimate Std. Error z value Pr(>|z|)    
+(Intercept)                   -8.418114   0.584672 -14.398  < 2e-16 ***
+number_customer_service_calls  0.603293   0.044873  13.445  < 2e-16 ***
+international_plan1            2.231650   0.165604  13.476  < 2e-16 ***
+total_day_minutes              0.013651   0.001228  11.115  < 2e-16 ***
+voice_mail_plan1              -2.599316   0.663570  -3.917 8.96e-05 ***
+total_eve_charge               0.079186   0.014912   5.310 1.09e-07 ***
+total_intl_minutes             0.083370   0.023032   3.620 0.000295 ***
+total_night_charge             0.077574   0.027096   2.863 0.004197 ** 
+total_intl_calls              -0.067010   0.026878  -2.493 0.012662 *  
+number_vmail_messages          0.049551   0.020472   2.420 0.015500 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 2344.8  on 2999  degrees of freedom
+Residual deviance: 1791.9  on 2990  degrees of freedom
+AIC: 1811.9
+
+Number of Fisher Scoring iterations: 6
+
+In GLM, 5-folds cross validation is set as a resampling technique to train the algorithm parameters. Forward
+stepwise selection is used as feature elimination, and parameter ‘glmstepAIC’ means every step according
+to the AIC value to determine the feature elimination. Adapting the ‘midianImput’ to finish the
+preprocessing.
