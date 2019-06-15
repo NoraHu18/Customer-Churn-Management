@@ -1,0 +1,75 @@
+library(caret)
+library(MASS)
+library(ggplot2)
+library(ISLR)
+library(leaps)
+library(glmnet)
+library(rpart)
+library(C50)
+library(pROC)
+library(class)
+library(randomForest)
+
+# input data
+dat.train=read.csv('churn-train.csv',header = T)
+dat.train=na.omit(dat.train)
+dat=dat.train
+dat=dat[,-4]
+Y = dat$class
+Yi=ifelse(Y==0,'NO','YES')
+Yi = as.factor(Yi)
+isample= sample(1:4000, size=3000)
+dat[,'area_code']=as.factor(dat[,'area_code'])
+dat[,'class']=as.factor(dat[,'class'])
+dat[,'state']=as.factor(dat[,'state'])
+dat[,'international_plan']=as.factor(dat[,'international_plan'])
+dat[,'voice_mail_plan']=as.factor(dat[,'voice_mail_plan'])
+
+## draw histgram for whole data
+dev.new()
+par(mfrow=c(4,5))
+for(j in 1:19){
+  if(!is.factor(dat[,j])){
+    hist(dat[,j], main=colnames(dat)[j], col=c('pink'))
+  }
+}
+
+## plot correlation hotmap 
+library(reshape2)
+melted_cormat <- melt(corr)
+head(melted_cormat)
+library(ggplot2)
+ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) + geom_tile(color = 'pink')
+
+### sample 
+itrain=dat[isample,]
+itest=dat[-isample,]
+
+##### fit glm model
+target<-'class' 
+predVars <- setdiff(names(itrain), target) 
+null.form <- paste(target, '1', sep=' ~ ') 
+full.form <- paste(target, paste(predVars, collapse=' + '), sep=' ~ ') 
+search.scope <- list(lower=null.form, upper=full.form) 
+train.control <- trainControl(method='cv', number=5, classProbs=TRUE)  
+glm.out <- train(itrain[,-20], Yi[isample], 
+                 method='glmStepAIC', 
+                 preProcess=c('medianImpute'), 
+                 trControl=train.control, 
+                 na.action=na.pass,
+                 scope=search.scope, 
+                 direction='forward', trace=0) 
+
+summary(glm.out) 
+
+glm.fitted=predict(glm.out)
+glm.pred=predict(glm.out,itest)
+tb = table(glm.pred,Yi[-isample])
+confusionMatrix(glm.pred,Yi[-isample])
+
+# roc plot
+glm.pred=predict(glm.out,itest,type = 'prob')
+roc = roc(response = Yi[-isample], predictor = glm.pred[,2])
+roc$auc
+plot(roc, type ='s', col ='blue')
+
