@@ -31,9 +31,9 @@ The class column is a classification variable which make determination. The main
 judgment for churn-holdout data whether the customer is determined to be lost. If the class is 1, the customer
 is determined to be lost, 0 otherwise.
 
-#客户流失预测项目
+# 客户流失预测项目
 很多公司存在客户流失问题，现对移动通信行业某公司客户流失进行预测。
-#数据类型描述
+# 数据类型描述
 此数据包共有4000条客户数据及21个特征数据，其中class为预测目标因变量，15个数字变量和4个分类变量。
-#研究方法
+# 研究方法
 用glm和random forest两个方法对数据进行预测，并比较两方法的预测准确度
