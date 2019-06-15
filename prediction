@@ -1,0 +1,13 @@
+# predict the churn-holdout
+dat.pred=read.csv('churn-holdout.csv',header = T)
+dat.pred[,'area_code']=as.factor(dat.pred[,'area_code'])
+dat.pred[,'class']=as.factor(dat.pred[,'class'])
+dat.pred[,'state']=as.factor(dat.pred[,'state'])
+dat.pred[,'international_plan']=as.factor(dat.pred[,'international_plan'])
+dat.pred[,'voice_mail_plan']=as.factor(dat.pred[,'voice_mail_plan'])
+churn.pred = predict(rf.out, dat.pred,type = 'prob')
+x = max.col(churn.pred)
+x=ifelse(x==1,0,1)
+predictions=cbind(dat.pred[,4],x,churn.pred[,c(1:2)])
+colnames(predictions)= c('phone_number','pred','0','1')
+write.table(predictions,file = 'predictions.csv',row.names = FALSE, sep=',')
