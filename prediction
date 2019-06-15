@@ -11,3 +11,16 @@ x=ifelse(x==1,0,1)
 predictions=cbind(dat.pred[,4],x,churn.pred[,c(1:2)])
 colnames(predictions)= c('phone_number','pred','0','1')
 write.table(predictions,file = 'predictions.csv',row.names = FALSE, sep=',')
+
+To compare the accuracy, we calculate the accuracy of train data and test data. GLM model has 86.4%
+corrected rate on train data and 87.1% on test data. Relatively, random forest model has better performance,
+which has 3.4% error rate on train data, and perfectly predict the class of test data.
+
+We also calculate the receiver operator characteristic curve on both model and its area under the curve.
+Random forest also has a better AUC than GLM model, and obviously, the smooth roc plot indicates that
+the first model fitted the data better. As a result, we choose the random forest model as the final model to
+predict the holdout data.
+
+The prediction result of 1000 holdout samples are showed in below table. There are 867 samples are
+assigned to no and 133 are divided to yes. In other words, the 868 customers will not change the
+telecommunications company and 133 will leave, where the leaving rate is 13.3%.
