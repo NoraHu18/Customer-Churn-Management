@@ -26,26 +26,14 @@ roc = roc(response = Yi[-isample], predictor = glm.pred[,2])
 roc$auc
 plot(roc, type ='s', col ='blue')
 
-## subset choose for rf by rfe
-subsets = c(1:19)
-ctrl= rfeControl(functions = rfFuncs, method = "cv",verbose = FALSE, returnResamp = "final")
-rfe.out = rfe(x= itrain[,-20], y= Yi[isample], sizes = subsets, rfeControl = ctrl)
-sel.var = rfe.out$optVariables
-itrain = itrain[,sel.var]
-itest = itest[,sel.var]
 
-
-
-result
+结果如下：
 > summary(glm.out)
-
 Call:
 NULL
-
 Deviance Residuals: 
     Min       1Q   Median       3Q      Max  
 -2.1389  -0.4786  -0.3119  -0.1772   3.1310  
-
 Coefficients:
                                Estimate Std. Error z value Pr(>|z|)    
 (Intercept)                   -8.418114   0.584672 -14.398  < 2e-16 ***
@@ -69,7 +57,13 @@ AIC: 1811.9
 
 Number of Fisher Scoring iterations: 6
 
+分析如下：
 In GLM, 5-folds cross validation is set as a resampling technique to train the algorithm parameters. Forward
 stepwise selection is used as feature elimination, and parameter ‘glmstepAIC’ means every step according
 to the AIC value to determine the feature elimination. Adapting the ‘midianImput’ to finish the
 preprocessing.
+We obtain the best subset to fit the model, setting the parameter method as ‘glmstepAIC’ in the
+caret::train function. In GLM model, there are 10 variables are included in the model, and only total day
+minutes and total day charge are not statistically significant.
+
+
