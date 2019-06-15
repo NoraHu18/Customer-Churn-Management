@@ -1,0 +1,21 @@
+## fit rf model
+control = trainControl(method = "cv",number = 5,
+                       savePredictions='final',
+                       classProbs=TRUE,
+                       summaryFunction=twoClassSummary)
+rf.out = train(x= itrain[,-20], y = Yi[isample],method = "rf",
+               preProcess = "scale" ,
+               trControl = control,metric='ROC')
+
+rf.pred=predict(rf.out,itest,type = 'prob')
+rf.ROC = roc(response = Y[-isample],predictor = rf.pred[,2])
+plot(rf.ROC, type = 's', col = 'pink',add = TRUE)
+
+
+# final rf model using all 4000 samples
+subsets = c(1:19)
+ctrl= rfeControl(functions = rfFuncs, method = "cv",verbose = FALSE, returnResamp = "final")
+rfe.out = rfe(x= dat[,-20], y= Yi, sizes = subsets, rfeControl = ctrl)
+sel.f.var = rfe.out$optVariables
+dat.f = dat[,c(sel.f.var,'class')]
+rf.f.out = randomForest(class~., data = dat.f,mtry =7)
