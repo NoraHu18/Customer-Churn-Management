@@ -25,6 +25,7 @@ international plan, voice mail plan. Includes in categorial variables, there are
 50), 3 different area codes (408, 415, 510), 2 different international plans (1, 2) and 2 voice mail plans (0,
 1). There is no missing value in the training data. Phone number was deleted from the raw data because of
 the useless meaning.
+
 The raw churn-holdout data contains 1000 rows and columns are same with churn except “class” column.
 The class column is a classification variable which make determination. The main target is to make a
 judgment for churn-holdout data whether the customer is determined to be lost. If the class is 1, the customer
