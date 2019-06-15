@@ -1,0 +1,35 @@
+##### fit glm model
+target<-'class' 
+predVars <- setdiff(names(itrain), target) 
+null.form <- paste(target, '1', sep=' ~ ') 
+full.form <- paste(target, paste(predVars, collapse=' + '), sep=' ~ ') 
+search.scope <- list(lower=null.form, upper=full.form) 
+train.control <- trainControl(method='cv', number=5, classProbs=TRUE)  
+glm.out <- train(itrain[,-20], Yi[isample], 
+                 method='glmStepAIC', 
+                 preProcess=c('medianImpute'), 
+                 trControl=train.control, 
+                 na.action=na.pass,
+                 scope=search.scope, 
+                 direction='forward', trace=0) 
+
+summary(glm.out) 
+
+glm.fitted=predict(glm.out)
+glm.pred=predict(glm.out,itest)
+tb = table(glm.pred,Yi[-isample])
+confusionMatrix(glm.pred,Yi[-isample])
+
+# roc plot
+glm.pred=predict(glm.out,itest,type = 'prob')
+roc = roc(response = Yi[-isample], predictor = glm.pred[,2])
+roc$auc
+plot(roc, type ='s', col ='blue')
+
+## subset choose for rf by rfe
+subsets = c(1:19)
+ctrl= rfeControl(functions = rfFuncs, method = "cv",verbose = FALSE, returnResamp = "final")
+rfe.out = rfe(x= itrain[,-20], y= Yi[isample], sizes = subsets, rfeControl = ctrl)
+sel.var = rfe.out$optVariables
+itrain = itrain[,sel.var]
+itest = itest[,sel.var]
